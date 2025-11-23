@@ -1,0 +1,40 @@
+{
+  "name": "离线图片压缩工具",
+  "short_name": "图片压缩",
+  "description": "完全在浏览器本地运行的离线图片压缩工具，保护您的隐私",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2196F3",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["utilities", "productivity"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "开始压缩",
+      "short_name": "压缩",
+      "description": "快速开始压缩图片",
+      "url": "/",
+      "icons": [
+        {
+          "src": "/favicon.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}

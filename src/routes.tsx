@@ -1,4 +1,4 @@
-import SamplePage from './pages/SamplePage';
+import CompressorPage from './pages/CompressorPage';
 import type { ReactNode } from 'react';
 
 interface RouteConfig {
@@ -10,9 +10,9 @@ interface RouteConfig {
 
 const routes: RouteConfig[] = [
   {
-    name: 'Sample Page',
+    name: '图片压缩',
     path: '/',
-    element: <SamplePage />
+    element: <CompressorPage />
   }
 ];
 
