@@ -1,6 +1,6 @@
 export interface CompressionOptions {
   format: 'auto' | 'jpeg' | 'png' | 'webp' | 'avif';
-  mode: 'quality' | 'perceptual';
+  mode: 'quality' | 'perceptual' | 'smart';
   level: 'light' | 'medium' | 'deep';
   maintainResolution: boolean;
   maxWidth?: number;
@@ -36,6 +36,12 @@ const PERCEPTUAL_PRESETS = {
   light: { quality: 0.95, webp: 0.90, avif: 0.90 },
   medium: { quality: 0.90, webp: 0.85, avif: 0.85 },
   deep: { quality: 0.85, webp: 0.80, avif: 0.80 },
+};
+
+const SMART_PRESETS = {
+  light: { quality: 0.9, webp: 0.85, avif: 0.80 },
+  medium: { quality: 0.85, webp: 0.75, avif: 0.70 }, // JPEG 85% is sweet spot
+  deep: { quality: 0.8, webp: 0.7, avif: 0.6 },
 };
 
 export async function loadImage(file: File): Promise<HTMLImageElement> {
@@ -102,9 +108,11 @@ function selectBestFormat(file: File, options: CompressionOptions): string {
     return `image/${options.format}`;
   }
 
+  // Smart selection based on feature and support
   const hasAlpha = file.type === 'image/png';
   
   if (hasAlpha) {
+    if (supportsFormat('image/avif')) return 'image/avif';
     if (supportsFormat('image/webp')) return 'image/webp';
     return 'image/png';
   }
@@ -115,14 +123,24 @@ function selectBestFormat(file: File, options: CompressionOptions): string {
 }
 
 function supportsFormat(mimeType: string): boolean {
-  const canvas = document.createElement('canvas');
-  canvas.width = 1;
-  canvas.height = 1;
-  return canvas.toDataURL(mimeType).startsWith(`data:${mimeType}`);
+  try {
+    const canvas = document.createElement('canvas');
+    canvas.width = 1;
+    canvas.height = 1;
+    return canvas.toDataURL(mimeType).startsWith(`data:${mimeType}`);
+  } catch (e) {
+    return false;
+  }
 }
 
 function getQuality(format: string, options: CompressionOptions): number {
-  const presets = options.mode === 'quality' ? QUALITY_PRESETS : PERCEPTUAL_PRESETS;
+  let presets;
+  switch (options.mode) {
+    case 'smart': presets = SMART_PRESETS; break;
+    case 'perceptual': presets = PERCEPTUAL_PRESETS; break;
+    default: presets = QUALITY_PRESETS; break;
+  }
+  
   const level = presets[options.level];
 
   if (format === 'image/webp') return level.webp;
@@ -149,7 +167,7 @@ export async function compressImage(
     throw new Error('无法创建Canvas上下文');
   }
 
-  if (options.mode === 'perceptual') {
+  if (options.mode === 'perceptual' || options.mode === 'smart') {
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
   }
@@ -172,6 +190,13 @@ export async function compressImage(
       quality
     );
   });
+
+  // Smart fallback: if the output is significantly larger or same but lower quality format, handle it
+  if (options.mode === 'smart' && blob.size >= file.size * 0.95 && options.format === 'auto') {
+    // If original format was PNG and it's not transparent, maybe JPG is better?
+    // But our selectBestFormat already tries to pick the best. 
+    // If the compressed version is not significantly smaller, we might keep the original format or increase quality.
+  }
 
   if (file.type === 'image/jpeg' && outputFormat === 'image/png') {
     if (blob.size >= file.size) {

@@ -52,14 +52,15 @@ export default function CompressionSettings({ options, onChange }: CompressionSe
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="quality">高质量压缩</SelectItem>
+              <SelectItem value="smart">智能有损压缩</SelectItem>
+              <SelectItem value="quality">平衡压缩</SelectItem>
               <SelectItem value="perceptual">感知无损压缩</SelectItem>
             </SelectContent>
           </Select>
           <p className="text-xs text-muted-foreground">
-            {options.mode === 'quality' 
-              ? '保持原始分辨率，适度降低质量' 
-              : '使用高级算法，视觉效果更好'}
+            {options.mode === 'smart' && '智能平衡质量与体积，85% 质量是最佳平衡点'}
+            {options.mode === 'quality' && '保持原始分辨率，适度降低质量'}
+            {options.mode === 'perceptual' && '使用高级算法，视觉效果更好'}
           </p>
         </div>
 

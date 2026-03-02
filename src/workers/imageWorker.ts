@@ -27,7 +27,7 @@ async function processImage(
     throw new Error('无法创建Canvas上下文');
   }
 
-  if (options.mode === 'perceptual') {
+  if (options.mode === 'perceptual' || options.mode === 'smart') {
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
   }
@@ -112,8 +112,19 @@ const PERCEPTUAL_PRESETS = {
   deep: { quality: 0.85, webp: 0.80, avif: 0.80 },
 };
 
+const SMART_PRESETS = {
+  light: { quality: 0.9, webp: 0.85, avif: 0.80 },
+  medium: { quality: 0.85, webp: 0.75, avif: 0.70 }, // JPEG 85% is sweet spot
+  deep: { quality: 0.8, webp: 0.7, avif: 0.6 },
+};
+
 function getQuality(format: string, options: CompressionOptions): number {
-  const presets = options.mode === 'quality' ? QUALITY_PRESETS : PERCEPTUAL_PRESETS;
+  let presets;
+  switch (options.mode) {
+    case 'smart': presets = SMART_PRESETS; break;
+    case 'perceptual': presets = PERCEPTUAL_PRESETS; break;
+    default: presets = QUALITY_PRESETS; break;
+  }
   const level = presets[options.level];
 
   if (format === 'image/webp') return level.webp;

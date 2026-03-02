@@ -13,7 +13,7 @@ export default function CompressorPage() {
   const [images, setImages] = useState<ProcessedImage[]>([]);
   const [options, setOptions] = useState<CompressionOptions>({
     format: 'auto',
-    mode: 'quality',
+    mode: 'smart',
     level: 'medium',
     maintainResolution: true,
   });
