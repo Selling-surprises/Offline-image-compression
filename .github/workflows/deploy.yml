@@ -1,34 +1,66 @@
-name: Deploy to GitHub Pages
+name: Deploy
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [main]  # 或你的默认分支名，如 master
+  workflow_dispatch:  # 允许手动触发
 
-# 添加权限声明
+# 设置 GitHub Pages 所需的权限
 permissions:
-  contents: write   # 允许推送代码到分支
+  contents: read
+  pages: write
+  id-token: write
+
+# 并发控制：只保留一个运行中的部署
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 20  # 或你项目所需的版本
+          cache: 'npm'      # 缓存 node_modules 加速构建
+
+      # 如果需要安装私有包，配置 npm 认证
+      - name: Configure npm for private packages
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+        if: ${{ secrets.NPM_TOKEN != '' }}  # 仅当有 NPM_TOKEN 时执行
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci  # 使用 package-lock.json 保证依赖一致性
 
-      - name: Build
-        run: npx vite build
+      # 可选：运行 lint 检查
+      - name: Run lint
+        run: npm run lint
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+      # 构建项目
+      # 注意：你的 package.json 中 build 脚本当前是 echo 提示，
+      # 你需要先将其修改为 "build": "vite build" 或直接使用以下命令：
+      - name: Build project
+        run: npx vite build  # 或 npm run build（如果已修改脚本）
+
+      # 上传构建产物供后续部署步骤使用
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-          force_orphan: true   # 强制创建孤立分支，避免历史冲突
+          path: ./dist  # Vite 默认输出目录，根据实际情况修改
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
