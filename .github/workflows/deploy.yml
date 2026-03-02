@@ -20,25 +20,20 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install  # ← 改用 npm install
 
       - name: Build
         run: npx vite build
 
-      # ===== 添加调试步骤 =====
-      - name: List build output
+      - name: Debug build output
         run: |
           echo "=== dist directory ==="
           ls -la dist/
           echo "=== assets directory ==="
-          ls -la dist/assets/ || echo "assets directory not found!"
-          echo "=== index.html content ==="
-          cat dist/index.html | grep -E 'src=|href=' | head -5
+          ls -la dist/assets/
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
-          # 暂时移除 force_orphan，避免每次都清空历史
-          # force_orphan: true
