@@ -3,11 +3,11 @@ import react from '@vitejs/plugin-react';
 import svgr from 'vite-plugin-svgr';
 import path from 'path';
 
-import { miaodaDevPlugin } from "Offline-image-compression";
+import { miaodaDevPlugin } from "miaoda-sc-plugin";  // ← 改回正确的包名
 
-// https://vite.dev/config/
+// https://vite.dev/config/ 
 export default defineConfig({
-  base: '/miaoda-react-admin/',
+  base: '/Offline-image-compression/',  // ← 同时修改 base 路径为你的仓库名
   plugins: [
     react(),
     svgr({
