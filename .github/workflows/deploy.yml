@@ -2,11 +2,10 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
-# 添加权限声明
 permissions:
-  contents: write   # 允许推送代码到分支
+  contents: write
 
 jobs:
   build-and-deploy:
@@ -21,14 +20,25 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Build
         run: npx vite build
+
+      # ===== 添加调试步骤 =====
+      - name: List build output
+        run: |
+          echo "=== dist directory ==="
+          ls -la dist/
+          echo "=== assets directory ==="
+          ls -la dist/assets/ || echo "assets directory not found!"
+          echo "=== index.html content ==="
+          cat dist/index.html | grep -E 'src=|href=' | head -5
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
-          force_orphan: true   # 强制创建孤立分支，避免历史冲突
+          # 暂时移除 force_orphan，避免每次都清空历史
+          # force_orphan: true
