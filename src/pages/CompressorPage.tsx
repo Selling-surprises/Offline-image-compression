@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Download, Trash2, Settings2 } from 'lucide-react';
+import { Download, Trash2, Settings2, Image as ImageIcon, CheckCircle2, Clock, TrendingDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import ImageUploadZone from '@/components/ImageUploadZone';
@@ -165,57 +165,115 @@ export default function CompressorPage() {
     : 0;
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="@container max-w-[1600px] mx-auto p-4 xl:p-8">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* 背景装饰 */}
+      <div className="absolute inset-0 bg-grid-pattern opacity-30 pointer-events-none" />
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+      
+      <div className="@container max-w-[1600px] mx-auto p-4 xl:p-8 relative z-10">
         <div className="space-y-6">
-          <div className="text-center space-y-2">
-            <h1 className="text-3xl xl:text-4xl font-bold gradient-text">
+          {/* 标题区域 */}
+          <div className="text-center space-y-3 animate-scale-in">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full mb-2">
+              <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+              <span className="text-sm font-medium text-primary">完全离线 · 保护隐私</span>
+            </div>
+            <h1 className="text-4xl xl:text-5xl font-bold gradient-text">
               离线图片压缩工具
             </h1>
-            <p className="text-muted-foreground">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               完全在浏览器本地运行，保护您的隐私，无需上传到服务器
             </p>
           </div>
 
+          {/* 统计卡片 */}
           {stats.total > 0 && (
-            <div className="grid grid-cols-2 xl:grid-cols-5 gap-4">
-              <div className="bg-card p-4 rounded-lg border shadow-card">
-                <div className="text-sm text-muted-foreground">总图片数</div>
-                <div className="text-2xl font-bold text-primary">{stats.total}</div>
+            <div className="grid grid-cols-2 xl:grid-cols-5 gap-4 animate-scale-in">
+              <div className="group relative bg-gradient-to-br from-card to-card/50 p-5 rounded-xl border shadow-card hover:shadow-card-hover transition-smooth overflow-hidden">
+                <div className="absolute top-0 right-0 w-20 h-20 bg-primary/10 rounded-full blur-2xl group-hover:bg-primary/20 transition-smooth" />
+                <div className="relative">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="p-2 bg-primary/10 rounded-lg">
+                      <ImageIcon className="w-4 h-4 text-primary" />
+                    </div>
+                    <div className="text-sm text-muted-foreground">总图片数</div>
+                  </div>
+                  <div className="text-3xl font-bold text-primary">{stats.total}</div>
+                </div>
               </div>
-              <div className="bg-card p-4 rounded-lg border shadow-card">
-                <div className="text-sm text-muted-foreground">已完成</div>
-                <div className="text-2xl font-bold text-success">{stats.completed}</div>
+
+              <div className="group relative bg-gradient-to-br from-card to-card/50 p-5 rounded-xl border shadow-card hover:shadow-card-hover transition-smooth overflow-hidden">
+                <div className="absolute top-0 right-0 w-20 h-20 bg-success/10 rounded-full blur-2xl group-hover:bg-success/20 transition-smooth" />
+                <div className="relative">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="p-2 bg-success/10 rounded-lg">
+                      <CheckCircle2 className="w-4 h-4 text-success" />
+                    </div>
+                    <div className="text-sm text-muted-foreground">已完成</div>
+                  </div>
+                  <div className="text-3xl font-bold text-success">{stats.completed}</div>
+                </div>
               </div>
-              <div className="bg-card p-4 rounded-lg border shadow-card">
-                <div className="text-sm text-muted-foreground">待处理</div>
-                <div className="text-2xl font-bold text-warning">{stats.pending}</div>
+
+              <div className="group relative bg-gradient-to-br from-card to-card/50 p-5 rounded-xl border shadow-card hover:shadow-card-hover transition-smooth overflow-hidden">
+                <div className="absolute top-0 right-0 w-20 h-20 bg-warning/10 rounded-full blur-2xl group-hover:bg-warning/20 transition-smooth" />
+                <div className="relative">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="p-2 bg-warning/10 rounded-lg">
+                      <Clock className="w-4 h-4 text-warning" />
+                    </div>
+                    <div className="text-sm text-muted-foreground">待处理</div>
+                  </div>
+                  <div className="text-3xl font-bold text-warning">{stats.pending}</div>
+                </div>
               </div>
-              <div className="bg-card p-4 rounded-lg border shadow-card">
-                <div className="text-sm text-muted-foreground">节省空间</div>
-                <div className="text-2xl font-bold text-success">{formatFileSize(totalSaved)}</div>
+
+              <div className="group relative bg-gradient-to-br from-card to-card/50 p-5 rounded-xl border shadow-card hover:shadow-card-hover transition-smooth overflow-hidden">
+                <div className="absolute top-0 right-0 w-20 h-20 bg-success/10 rounded-full blur-2xl group-hover:bg-success/20 transition-smooth" />
+                <div className="relative">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="p-2 bg-success/10 rounded-lg">
+                      <TrendingDown className="w-4 h-4 text-success" />
+                    </div>
+                    <div className="text-sm text-muted-foreground">节省空间</div>
+                  </div>
+                  <div className="text-3xl font-bold text-success">{formatFileSize(totalSaved)}</div>
+                </div>
               </div>
-              <div className="bg-card p-4 rounded-lg border shadow-card">
-                <div className="text-sm text-muted-foreground">总压缩率</div>
-                <div className="text-2xl font-bold text-primary">{totalRatio.toFixed(1)}%</div>
+
+              <div className="group relative bg-gradient-to-br from-primary/10 to-primary/5 p-5 rounded-xl border border-primary/20 shadow-primary hover:shadow-glow transition-smooth overflow-hidden">
+                <div className="absolute top-0 right-0 w-20 h-20 bg-primary/20 rounded-full blur-2xl group-hover:bg-primary/30 transition-smooth" />
+                <div className="relative">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="p-2 bg-primary/20 rounded-lg">
+                      <TrendingDown className="w-4 h-4 text-primary" />
+                    </div>
+                    <div className="text-sm text-primary font-medium">总压缩率</div>
+                  </div>
+                  <div className="text-3xl font-bold gradient-text">{totalRatio.toFixed(1)}%</div>
+                </div>
               </div>
             </div>
           )}
 
+          {/* 主要内容区域 */}
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
             <div className="xl:col-span-2 space-y-6">
               <ImageUploadZone onFilesSelected={handleFilesSelected} disabled={isProcessing} />
 
               {images.length > 0 && (
-                <div className="space-y-4">
+                <div className="space-y-4 animate-scale-in">
                   <div className="flex items-center justify-between">
                     <h2 className="text-xl font-semibold flex items-center gap-2">
-                      <Settings2 className="w-5 h-5" />
+                      <div className="p-2 bg-primary/10 rounded-lg">
+                        <Settings2 className="w-5 h-5 text-primary" />
+                      </div>
                       图片列表
                     </h2>
                     <div className="flex gap-2">
                       {stats.completed > 0 && (
-                        <Button onClick={handleDownloadAll} className="gap-2">
+                        <Button onClick={handleDownloadAll} className="gap-2 shadow-primary">
                           <Download className="w-4 h-4" />
                           下载全部
                         </Button>
@@ -243,10 +301,13 @@ export default function CompressorPage() {
                 <Button
                   onClick={handleCompress}
                   disabled={isProcessing || stats.pending === 0}
-                  className="w-full h-12 text-lg"
+                  className="w-full h-14 text-lg font-semibold shadow-primary hover:shadow-glow transition-smooth relative overflow-hidden group"
                   size="lg"
                 >
-                  {isProcessing ? '处理中...' : `开始压缩 (${stats.pending})`}
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary-light/20 to-transparent opacity-0 group-hover:opacity-100 transition-smooth" />
+                  <span className="relative">
+                    {isProcessing ? '处理中...' : `开始压缩 (${stats.pending})`}
+                  </span>
                 </Button>
               )}
             </div>

@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { Upload, Image as ImageIcon } from 'lucide-react';
+import { Upload, Image as ImageIcon, Sparkles } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 
@@ -82,14 +82,19 @@ export default function ImageUploadZone({ onFilesSelected, disabled }: ImageUplo
 
   return (
     <Card
-      className={`relative overflow-hidden transition-smooth ${
-        isDragging ? 'border-primary bg-primary/5' : 'border-border'
-      } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:border-primary'}`}
+      className={`relative overflow-hidden transition-smooth border-2 ${
+        isDragging 
+          ? 'border-primary bg-gradient-to-br from-primary/10 to-primary/5 shadow-glow' 
+          : 'border-dashed border-border hover:border-primary/50 hover:shadow-card'
+      } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      <label className={`block p-12 ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
+      {/* 背景装饰 */}
+      <div className="absolute inset-0 bg-grid-pattern opacity-20 pointer-events-none" />
+      
+      <label className={`block p-12 relative ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
         <input
           type="file"
           multiple
@@ -99,30 +104,50 @@ export default function ImageUploadZone({ onFilesSelected, disabled }: ImageUplo
           className="hidden"
         />
         
-        <div className="flex flex-col items-center justify-center space-y-4 text-center">
-          <div className={`p-6 rounded-full transition-smooth ${
-            isDragging ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground'
+        <div className="flex flex-col items-center justify-center space-y-6 text-center">
+          <div className={`relative p-8 rounded-2xl transition-smooth ${
+            isDragging 
+              ? 'bg-gradient-primary shadow-glow scale-110' 
+              : 'bg-gradient-to-br from-primary/10 to-primary/5 hover:scale-105'
           }`}>
             {isDragging ? (
-              <ImageIcon className="w-12 h-12" />
+              <ImageIcon className="w-16 h-16 text-primary-foreground animate-pulse" />
             ) : (
-              <Upload className="w-12 h-12" />
+              <Upload className="w-16 h-16 text-primary" />
+            )}
+            {!isDragging && (
+              <div className="absolute -top-1 -right-1">
+                <Sparkles className="w-6 h-6 text-primary animate-pulse" />
+              </div>
             )}
           </div>
           
-          <div className="space-y-2">
-            <h3 className="text-xl font-semibold">
-              {isDragging ? '松开以上传图片' : '拖放图片到此处'}
+          <div className="space-y-3">
+            <h3 className="text-2xl font-bold">
+              {isDragging ? (
+                <span className="gradient-text">松开以上传图片</span>
+              ) : (
+                '拖放图片到此处'
+              )}
             </h3>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground text-lg">
               或点击选择文件
             </p>
           </div>
           
-          <div className="text-sm text-muted-foreground space-y-1">
-            <p>支持格式：JPEG、PNG、WebP、AVIF</p>
-            <p>单个文件最大 50MB</p>
-            <p>支持批量上传</p>
+          <div className="flex flex-wrap justify-center gap-4 text-sm">
+            <div className="flex items-center gap-2 px-4 py-2 bg-card rounded-lg border">
+              <div className="w-2 h-2 bg-primary rounded-full" />
+              <span className="text-muted-foreground">支持 JPEG、PNG、WebP、AVIF</span>
+            </div>
+            <div className="flex items-center gap-2 px-4 py-2 bg-card rounded-lg border">
+              <div className="w-2 h-2 bg-success rounded-full" />
+              <span className="text-muted-foreground">单个文件最大 50MB</span>
+            </div>
+            <div className="flex items-center gap-2 px-4 py-2 bg-card rounded-lg border">
+              <div className="w-2 h-2 bg-warning rounded-full" />
+              <span className="text-muted-foreground">支持批量上传</span>
+            </div>
           </div>
         </div>
       </label>
