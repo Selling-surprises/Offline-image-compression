@@ -1,5 +1,4 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 import routes from './routes';
 
@@ -8,7 +7,7 @@ import routes from './routes';
 // import { supabase } from 'supabase-js';
 // import Header from '@/components/common/Header';
 
-const App: React.FC = () => {
+function App() {
 {/*
     // USING MIAODA-AUTH-REACT (Uncomment when auth is required):
     // =========================================================
@@ -56,6 +55,6 @@ const App: React.FC = () => {
       </div>
     </Router>
   );
-};
+}
 
 export default App;
