@@ -7,7 +7,7 @@ import { miaodaDevPlugin } from "miaoda-sc-plugin";
 
 // https://vite.dev/config/ 
 export default defineConfig({
-  base: '/Offline-image-compression/',  // ← 此处改为你的仓库名
+  base: './',  // ← 修改为相对路径
   plugins: [
     react(),
     svgr({
