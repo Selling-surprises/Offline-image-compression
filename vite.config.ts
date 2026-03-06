@@ -7,7 +7,7 @@ import { miaodaDevPlugin } from "miaoda-sc-plugin";
 
 // https://vite.dev/config/ 
 export default defineConfig({
-  base: './',  // ← 修改为相对路径
+  base: '/',  // 用户站点用根路径
   plugins: [
     react(),
     svgr({
