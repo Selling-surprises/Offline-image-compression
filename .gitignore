@@ -12,7 +12,12 @@ dist
 dist-ssr
 output
 *.local
+README.md
+package.json
 package-lock.json
+vite.config.ts
+src/App.tsx
+.github/workflows/deploy.yml
 
 # Editor directories and files
 .vscode/*
